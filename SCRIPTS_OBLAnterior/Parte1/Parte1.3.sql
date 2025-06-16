@@ -115,7 +115,7 @@ CREATE TABLE Recompensa (
     CONSTRAINT pk_Recompensa PRIMARY KEY (id)
 );
 
-CREATE TABLE Misiones (
+CREATE TABLE Misiones ( -- TODO agregar a la doc este ultimo campo
     id         NUMBER(5)  NOT NULL,
     nombre     VARCHAR2(20) NOT NULL,
     descripcion VARCHAR2(50) NOT NULL,
