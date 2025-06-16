@@ -121,6 +121,7 @@ CREATE TABLE Misiones (
     descripcion VARCHAR2(50) NOT NULL,
     nivelMin   NUMBER(3)    NOT NULL CHECK (nivelMin BETWEEN 0 AND 342),
     estado     VARCHAR2(10) NOT NULL CHECK (estado IN ('Principal','Secundaria','Especial')),
+    estado_Avance VARCHAR2(10) NOT NULL CHECK (estado_Avance IN ('Pendiente','En Progreso','Completada')),
     CONSTRAINT pk_Misiones PRIMARY KEY (id)
 );
 
