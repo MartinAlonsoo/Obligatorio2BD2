@@ -121,7 +121,6 @@ CREATE TABLE Misiones ( -- TODO agregar a la doc este ultimo campo
     descripcion VARCHAR2(50) NOT NULL,
     nivelMin   NUMBER(3)    NOT NULL CHECK (nivelMin BETWEEN 0 AND 342),
     estado     VARCHAR2(10) NOT NULL CHECK (estado IN ('Principal','Secundaria','Especial')),
-    estado_Avance VARCHAR2(10) NOT NULL CHECK (estado_Avance IN ('Pendiente','En Progreso','Completada')),
     CONSTRAINT pk_Misiones PRIMARY KEY (id)
 );
 
@@ -293,4 +292,20 @@ CREATE TABLE Mision_Es_Previa_De_Habilidad (
       REFERENCES Misiones(id),
     CONSTRAINT fk_PreviaH_Habilidad   FOREIGN KEY (nombre)
       REFERENCES Habilidades(nombre)
+);
+
+CREATE TABLE Personaje_Mision (
+    emailJugador        VARCHAR2(40)    NOT NULL,
+    idMision            NUMBER(5)       NOT NULL,
+    estado_mision_pers  VARCHAR2(15)    NOT NULL 
+        CHECK (estado_mision_pers IN ('En progreso', 'Completada')),
+    recompensas_recibidas CHAR(1)       DEFAULT 'N' NOT NULL 
+        CHECK (recompensas_recibidas IN ('S', 'N')),
+    
+    CONSTRAINT pk_Personaje_Mision 
+        PRIMARY KEY (emailJugador, idMision),
+    CONSTRAINT fk_Personaje_Mision_Pers 
+        FOREIGN KEY (emailJugador) REFERENCES Personaje(email_Jugador),
+    CONSTRAINT fk_Personaje_Mision_Mision 
+        FOREIGN KEY (idMision) REFERENCES Misiones(id)
 );

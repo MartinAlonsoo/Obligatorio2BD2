@@ -1,28 +1,33 @@
-CREATE OR REPLACE TRIGGER TRG_VALIDAR_MISION_PREVIA
-BEFORE UPDATE ON Misiones
+CREATE OR REPLACE TRIGGER TRG_VALIDAR_INICIO_MISION
+BEFORE INSERT OR UPDATE ON Personaje_Mision
 FOR EACH ROW
 DECLARE
     v_conteo_previas_no_completadas NUMBER;
 BEGIN
+    -- La lógica solo se ejecuta si se está insertando o actualizando una misión 
+    -- al estado 'En progreso'.
+    IF (:INSERTING OR UPDATING) AND :new.estado_mision_pers = 'En progreso' THEN
     
-    
-    IF UPDATING('estado_Avance') AND :new.estado_Avance = 'En progreso' THEN
+        -- Contamos cuántas de las misiones prerrequisito para la misión que se intenta iniciar
+        -- NO están registradas como 'Completada' para este personaje específico.
         SELECT COUNT(*)
         INTO v_conteo_previas_no_completadas
-        FROM Misiones m
-        JOIN Mision_Es_Previa_De_Mision pre
-          ON m.id = pre.codMision1 
-        WHERE pre.codMision2 = :new.id 
-          AND m.estado_Avance != 'Completada';
+        FROM Mision_Es_Previa_De_Mision pre
+        WHERE 
+            pre.codMision2 = :new.idMision -- Prerrequisitos de la misión actual
+            AND NOT EXISTS ( -- Y no existe un registro de que el personaje la haya completado
+                SELECT 1
+                FROM Personaje_Mision pm
+                WHERE pm.idMision = pre.codMision1      -- La misión previa
+                  AND pm.emailJugador = :new.emailJugador -- Para este personaje
+                  AND pm.estado_mision_pers = 'Completada'
+            );
 
-        
+        -- Si el contador es mayor a 0, significa que falta al menos un prerrequisito por cumplir.
         IF v_conteo_previas_no_completadas > 0 THEN
-            
             RAISE_APPLICATION_ERROR(-20001, 'No se puede iniciar la misión. Existen misiones previas no completadas.');
         END IF;
     END IF;
-    NULL; 
-
 END;
 
 
