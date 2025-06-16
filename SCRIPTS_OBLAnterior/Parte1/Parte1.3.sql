@@ -14,11 +14,7 @@ DROP TABLE Personaje_Posee_Habilidades    CASCADE CONSTRAINTS;
 -- DROP TABLE Jugador_Tiene_Personaje     CASCADE CONSTRAINTS;
 DROP TABLE Mapa                           CASCADE CONSTRAINTS;
 DROP TABLE CaracteristicaAfectada         CASCADE CONSTRAINTS;
-DROP TABLE Item_Material                  CASCADE CONSTRAINTS;
-DROP TABLE Item_Consumible                CASCADE CONSTRAINTS;
-DROP TABLE Item_Armadura                  CASCADE CONSTRAINTS;
-DROP TABLE Item_Arma                      CASCADE CONSTRAINTS;
-DROP TABLE Item_Reliquia                  CASCADE CONSTRAINTS;
+DROP TABLE Personaje_Mision               CASCADE CONSTRAINTS;
 DROP TABLE Items                          CASCADE CONSTRAINTS;
 DROP TABLE Misiones                       CASCADE CONSTRAINTS;
 DROP TABLE Recompensa                     CASCADE CONSTRAINTS;
@@ -125,11 +121,17 @@ CREATE TABLE Misiones ( -- TODO agregar a la doc este ultimo campo
 );
 
 CREATE TABLE Items (
-    nombre               VARCHAR2(20) NOT NULL,
-    rareza               VARCHAR2(10) NOT NULL  CHECK (rareza IN ('Comun','Rara','Epica','Legendaria')),
-    nivelMinUtilizacion  NUMBER(3)     NOT NULL  CHECK (nivelMinUtilizacion BETWEEN 0 AND 342),
-    intercambiable       CHAR(1)       NOT NULL  CHECK (intercambiable IN ('S','N')),
-    CONSTRAINT pk_Items PRIMARY KEY (nombre)
+    nombre               VARCHAR2(20) NOT NULL, -- TODO se elimina la herencia
+    categoria            VARCHAR2(20) NOT NULL,
+    rareza               VARCHAR2(10) NOT NULL,
+    nivelMinUtilizacion  NUMBER(3)    NOT NULL,
+    intercambiable       CHAR(1)      NOT NULL,
+    
+    CONSTRAINT pk_Items PRIMARY KEY (nombre),
+    CONSTRAINT chk_item_categoria CHECK (categoria IN ('Arma', 'Armadura', 'Consumible', 'Material', 'Reliquia')),
+    CONSTRAINT chk_item_rareza CHECK (rareza IN ('Comun','Rara','Epica','Legendaria')),
+    CONSTRAINT chk_item_nivelMin CHECK (nivelMinUtilizacion BETWEEN 0 AND 342),
+    CONSTRAINT chk_item_intercambiable CHECK (intercambiable IN ('S','N'))
 );
 
 CREATE TABLE CaracteristicaAfectada (
@@ -141,40 +143,6 @@ CREATE TABLE CaracteristicaAfectada (
       REFERENCES Items(nombre)
 );
 
-CREATE TABLE Item_Arma (
-    nombre VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_Item_Arma       PRIMARY KEY (nombre),
-    CONSTRAINT fk_Item_Arma       FOREIGN KEY (nombre)
-      REFERENCES Items(nombre)
-);
-
-CREATE TABLE Item_Armadura (
-    nombre VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_Item_Armadura   PRIMARY KEY (nombre),
-    CONSTRAINT fk_Item_Armadura   FOREIGN KEY (nombre)
-      REFERENCES Items(nombre)
-);
-
-CREATE TABLE Item_Consumible (
-    nombre VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_Item_Consumible PRIMARY KEY (nombre),
-    CONSTRAINT fk_Item_Consumible FOREIGN KEY (nombre)
-      REFERENCES Items(nombre)
-);
-
-CREATE TABLE Item_Material (
-    nombre VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_Item_Material   PRIMARY KEY (nombre),
-    CONSTRAINT fk_Item_Material   FOREIGN KEY (nombre)
-      REFERENCES Items(nombre)
-);
-
-CREATE TABLE Item_Reliquia (
-    nombre VARCHAR2(20) NOT NULL,
-    CONSTRAINT pk_Item_Reliquia   PRIMARY KEY (nombre),
-    CONSTRAINT fk_Item_Reliquia   FOREIGN KEY (nombre)
-      REFERENCES Items(nombre)
-);
 
 CREATE TABLE Mapa (
     id NUMBER(5) NOT NULL,
@@ -294,7 +262,7 @@ CREATE TABLE Mision_Es_Previa_De_Habilidad (
       REFERENCES Habilidades(nombre)
 );
 
-CREATE TABLE Personaje_Mision (
+CREATE TABLE Personaje_Mision ( -- se genera esta tabla
     emailJugador        VARCHAR2(40)    NOT NULL,
     idMision            NUMBER(5)       NOT NULL,
     estado_mision_pers  VARCHAR2(15)    NOT NULL 
