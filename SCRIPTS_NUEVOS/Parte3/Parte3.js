@@ -1,4 +1,4 @@
-
+//Ejemplo de inserción de un personaje con progreso en MongoDB
 db.personajes_progreso.insertOne({
   "_id": "wukong@monkey.com",
   "id_personaje": 1,

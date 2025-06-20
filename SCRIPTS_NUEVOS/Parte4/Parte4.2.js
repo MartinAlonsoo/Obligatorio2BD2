@@ -2,13 +2,13 @@ db.personajes_progreso.aggregate([
   // Etapa 1: Filtra personajes con progreso <= 60%
   {
     $match: {
-      "estadisticas.progreso_general": { $lte: 60 } // $lte es "less than or equal"
+      "estadisticas.progreso_general": { $lte: 60 } 
     }
   },
   // Etapa 2: Ordena por enemigos derrotados de mayor a menor
   {
     $sort: {
-      "estadisticas.enemigos_derrotados": -1 // -1 para orden descendente
+      "estadisticas.enemigos_derrotados": -1 
     }
   },
   // Etapa 3: Limita el resultado a los 5 primeros

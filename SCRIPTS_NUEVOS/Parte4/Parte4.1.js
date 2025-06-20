@@ -12,15 +12,15 @@ db.personajes_progreso.aggregate([
   // Etapa 3: Agrupa por el ID del personaje y cuenta los logros
   {
     $group: {
-      _id: "$_id", // Agrupa por el email del jugador
-      cantidad_logros_exploracion: { $sum: 1 } // Suma 1 por cada logro encontrado
+      _id: "$_id", 
+      cantidad_logros_exploracion: { $sum: 1 } 
     }
   },
   // Etapa 4: Limpia el formato de salida
   {
     $project: {
-      _id: 0, // Oculta el campo _id original
-      email_jugador: "$_id", // Renombra _id a email_jugador
+      _id: 0, 
+      email_jugador: "$_id", 
       cantidad: "$cantidad_logros_exploracion"
     }
   }

@@ -1,4 +1,3 @@
-
 --Trigger para poblar los registros de subida de nivel
 CREATE OR REPLACE TRIGGER TRG_LOG_NIVEL
 AFTER UPDATE OF nivel ON Personaje
@@ -8,17 +7,14 @@ BEGIN
     INSERT INTO Log_Aumento_Nivel (emailJugador, nivel_anterior, nivel_nuevo)
     VALUES (:new.email_Jugador, :old.nivel, :new.nivel);
 END;
+/
 
 --Trigger para actualizar la fecha cuando se completa una mision
 CREATE OR REPLACE TRIGGER TRG_ACTUALIZAR_FECHA_MISION
 BEFORE UPDATE ON Personaje_Mision
 FOR EACH ROW
--- La cláusula WHEN es una forma eficiente de hacer que el cuerpo del trigger
--- solo se ejecute si se cumple esta condición específica.
 WHEN (new.estado_mision_pers = 'Completada' AND old.estado_mision_pers != 'Completada')
 BEGIN
-    -- Si el nuevo estado es 'Completada' y el estado anterior no lo era,
-    -- modificamos el valor de la columna 'fecha_estado' que está a punto de ser guardado.
     :new.fecha_estado := SYSDATE;
 END;
 /
@@ -43,7 +39,10 @@ IS
             FROM Personaje_Mision pm
             JOIN Misiones m ON pm.idMision = m.id
             WHERE pm.estado_mision_pers = 'Completada'
-              AND m.tipo_mision = 'Principal' -- Asumiendo que renombraste la columna 'estado'
+              -- =================================================================
+              -- LÍNEA CORREGIDA: Se usa m.estado en lugar de m.tipo_mision
+              -- =================================================================
+              AND m.estado = 'Principal' 
               AND pm.fecha_estado >= SYSDATE - 1
         )
         -- La lista final de candidatos es la intersección de los dos grupos
@@ -66,7 +65,7 @@ BEGIN
             -- Guardamos el estado para un posible rollback individual
             SAVEPOINT sp_jugador;
 
-            -- 1. Elegir una rareza aleatoria (ej. 70% Común, 20% Rara, 8% Épica, 2% Legendaria)
+            -- 1. Elegir una rareza aleatoria
             DECLARE
                 v_rand_num NUMBER := DBMS_RANDOM.VALUE(0, 1);
             BEGIN
@@ -98,20 +97,16 @@ BEGIN
             
         EXCEPTION
             WHEN OTHERS THEN
-                -- Si falla la entrega para un jugador, hacemos rollback a su punto de guardado
-                -- y continuamos con el siguiente, para no detener todo el proceso.
                 ROLLBACK TO sp_jugador;
                 DBMS_OUTPUT.PUT_LINE('Error procesando a ' || candidato.emailJugador || '. Omitiendo...');
         END;
     END LOOP;
 
-    -- Confirmamos todos los cambios de todos los jugadores procesados exitosamente.
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('Proceso de acreditación de premios diarios finalizado.');
     
 EXCEPTION
     WHEN OTHERS THEN
-        -- Si ocurre un error catastrófico, revertimos toda la transacción.
         ROLLBACK;
         RAISE;
 END PRC_ACREDITAR_PREMIO_DIARIO;

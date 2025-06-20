@@ -1,0 +1,150 @@
+
+2 rows deleted.
+
+
+0 rows deleted.
+
+
+0 rows deleted.
+
+
+1 row deleted.
+
+
+1 row deleted.
+
+
+2 rows deleted.
+
+
+3 rows deleted.
+
+
+Commit complete.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+1 row inserted.
+
+
+Commit complete.
+
+>> Datos de configuración inicial cargados.
+--------------------------------------------------
+
+
+PL/SQL procedure successfully completed.
+
+--- INICIO PRUEBAS: TRG_AJUSTAR_CARACTERISTICAS ---
+-- Caso 1 (Feliz): Actualización normal de 50 a 75.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+Commit complete.
+
+-- Caso 2 (Triste): Intento de poner agilidad a 150. Debería quedar en 100.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+Commit complete.
+
+-- Caso 3 (Triste): Intento de poner inteligencia a -50. Debería quedar en 0.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+Commit complete.
+
+-- Caso 4 (Feliz): Poner vitalidad en 100. Debería aceptarlo.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+Commit complete.
+
+--- FIN PRUEBAS: TRG_AJUSTAR_CARACTERISTICAS ---
+--------------------------------------------------
+
+
+PL/SQL procedure successfully completed.
+
+--- INICIO PRUEBAS: TRG_VALIDAR_INICIO_MISION ---
+-- Caso 1 (Feliz): Iniciar Mision A (ID 1001), que no tiene previas.
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row inserted.
+
+
+Commit complete.
+
+-- Caso 2 (Triste): Intentar iniciar Mision C (ID 1003). Fallará porque Mision B no está completa.
+
+
+PL/SQL procedure successfully completed.
+
+>> ÉXITO: El trigger bloqueó la operación con el error esperado.
+
+
+PL/SQL procedure successfully completed.
+
+
+Rollback complete.
+
+-- Caso 3 (Feliz): Completar Mision A e intentar iniciar Mision B (ID 1002).
+
+
+PL/SQL procedure successfully completed.
+
+
+1 row updated.
+
+
+1 row inserted.
+
+
+Commit complete.
+
+--- FIN PRUEBAS: TRG_VALIDAR_INICIO_MISION ---
+--------------------------------------------------
+
+
+PL/SQL procedure successfully completed.
+
