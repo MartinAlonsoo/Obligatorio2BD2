@@ -77,9 +77,7 @@ BEGIN
 END;
 /
 
---==============================================================================
 -- PRUEBAS PARA EL TRIGGER: TRG_VALIDAR_INICIO_MISION
---==============================================================================
 BEGIN
     DBMS_OUTPUT.PUT_LINE('--- INICIO PRUEBAS: TRG_VALIDAR_INICIO_MISION ---');
     DBMS_OUTPUT.PUT_LINE('-- Caso 1 (Feliz): Iniciar Mision A (ID 1001), que no tiene previas.');
